@@ -1,0 +1,60 @@
+@startuml processo_alvara
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title "Passo a Passo do Processo de Alvará"
+
+actor Permissionario as permissionario
+actor Defensor as defensor
+actor FuncionarioBalcao as funcionario_balcao
+actor Autoridade as autoridade
+
+boundary Frontend as frontend
+control ProcessoAlvara as processo_alvara
+control Validacao as validacao
+control Auditoria as auditoria
+database Database as database
+
+permissionario -> frontend : Iniciar solicitação
+frontend -> processo_alvara : Criar Processo de Alvará
+processo_alvara -> database : Armazenar dados do processo
+
+permissionario -> frontend : Enviar dados do veículo
+frontend -> processo_alvara : Associar veículo ao processo
+processo_alvara -> validacao : Verificar veículo
+validacao -> database : Consultar histórico do veículo
+validacao -> processo_alvara : Resultado da validação
+
+permissionario -> frontend : Enviar cursos realizados
+frontend -> processo_alvara : Associar cursos ao processo
+processo_alvara -> validacao : Validar cursos
+validacao -> database : Consultar dados de cursos
+validacao -> processo_alvara : Cursos válidos
+
+permissionario -> frontend : Agendar vistoria
+frontend -> processo_alvara : Criar agendamento de vistoria
+processo_alvara -> validacao : Validar pagamento da vistoria
+validacao -> database : Consultar pagamento
+validacao -> processo_alvara : Pagamento confirmado
+
+processo_alvara -> database : Atualizar status do processo para "Aguardando vistoria"
+
+== Processo Aprovado ==
+FuncionarioBalcao -> frontend : Marcar vistoria como realizada
+frontend -> processo_alvara : Atualizar status da vistoria
+processo_alvara -> validacao : Validar resultados da vistoria
+validacao -> database : Registrar vistoria como aprovada
+validacao -> processo_alvara : Resultado: "Aprovado"
+
+processo_alvara -> Auditoria : Registrar todas as etapas do processo
+Auditoria -> database : Armazenar logs do processo
+
+== Emissão do Alvará ==
+FuncionarioBalcao -> frontend : Submeter processo para aprovação
+frontend -> processo_alvara : Submeter à autoridade
+processo_alvara -> autoridade : Enviar para assinatura
+autoridade -> processo_alvara : Assinar digitalmente
+processo_alvara -> database : Criar Alvará
+database -> Auditoria : Registrar emissão do Alvará
+
+autoridade -> permissionario : Emitir Alvará para permissionário
+@enduml

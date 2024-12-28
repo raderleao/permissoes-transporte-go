@@ -1,0 +1,30 @@
+@startuml componentes
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title "Sistema de Alvarás Públicos - Componentes"
+
+Container_Boundary(processo_alvara, "Componente de Processo de Alvará") {
+    Component(servico_processos, "Serviço de Processos", "Go", "Gerencia processos de alvarás")
+    Component(servico_pagamentos, "Serviço de Pagamentos", "Go", "Processa pagamentos para validação")
+    Component(servico_notificacoes, "Serviço de Notificações", "Go", "Envia notificações de status do processo")
+    Component(servico_requisitos, "Serviço de Requisitos", "Go", "Valida cursos e vistorias")
+}
+
+Container_Boundary(alvara, "Componente de Alvará") {
+    Component(servico_emissao, "Serviço de Emissão de Alvarás", "Go", "Gera e emite alvarás após validação")
+    Component(servico_validade, "Serviço de Validade de Alvarás", "Go", "Gerencia prazos e vencimentos")
+}
+
+Container_Boundary(auditoria, "Componente de Auditoria") {
+    Component(servico_historico, "Serviço de Histórico", "Go", "Rastreia alterações e gera logs")
+}
+
+ContainerDb(database, "Banco de Dados", "MySql", "Armazena dados e históricos")
+
+Rel(servico_processos, servico_pagamentos, "Confirma pagamento de taxas")
+Rel(servico_processos, servico_requisitos, "Valida requisitos de cursos e vistorias")
+Rel(servico_requisitos, database, "Consulta dados de cursos e vistorias")
+Rel(servico_emissao, database, "Armazena alvarás emitidos")
+Rel(servico_historico, database, "Armazena logs de alterações")
+
+@enduml

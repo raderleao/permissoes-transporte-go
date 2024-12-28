@@ -1,0 +1,106 @@
+@startuml
+skinparam linetype ortho
+skinparam dpi 150
+skinparam defaultFontSize 10
+skinparam defaultTextAlignment center
+skinparam packageStyle Rectangle
+
+!define RECTANGLE_COLOR LightSkyBlue
+!define HEADER_COLOR LightBlue
+
+skinparam rectangle {
+    BackgroundColor RECTANGLE_COLOR
+    BorderColor Black
+    FontColor Black
+}
+
+' Definição do Layout da Página em Horizontal
+skinparam pageSize A4 landscape
+
+' Nível 1 - Secretaria
+rectangle "Secretário" as Secretario #HEADER_COLOR
+
+' Nível 2 - Secretaria Adjunto e Assessores
+rectangle "Secretário Adjunto" as SecAdj
+rectangle "Assessoria Técnica" as AssTec
+rectangle "Assessoria Jurídica" as AssJur
+rectangle "Chefia de Gabinete" as ChefGab
+rectangle "Ouvidoria" as Ouvidoria
+
+' Conexões do Nível 1 com Nível 2
+SecAdj --> Secretario
+AssTec --> Secretario
+AssJur --> Secretario
+ChefGab --> Secretario
+Ouvidoria --> Secretario
+
+' Nível 3 - Diretorias
+package "Diretoria Operacional" as DO {
+    rectangle "Centro de Controle Operacional - CCO" as CCO
+    rectangle "Núcleo de Controle e Logística" as NucLog
+    rectangle "Central de Rádio e Despacho" as RadioDesp
+    package "Sinistros e Perícia Viária" as CSPV {
+        rectangle "Análise e Estatística" as AnaliseEstat
+        rectangle "Análise de Sinistros Viários" as AnaliseSinistros
+        rectangle "Levantamento Pericial" as LevPericial
+    }
+    package "Fiscalização de Trânsito" as CFOT {
+        rectangle "Vídeo Monitoramento" as VideoMonit
+        rectangle "Operações Viárias" as Fiscalizacao
+    }
+    rectangle "Fiscalização de Transportes" as CFT
+}
+
+package "Diretoria Executiva" as DE {
+    package "Engenharia e Projetos" as CEPV {
+        rectangle "Projetos Viários" as Proj
+        rectangle "Sinalização" as Sinalizacao {
+            rectangle "Manutenção Semafórica" as ManutSemaf
+            rectangle "Implantação Horizontal e Vertical" as ImplSinal
+        }
+    }
+    package "Coordenação de Frota" as Frota {
+        rectangle "Manutenção da Frota" as ControleFrota
+        rectangle "Transporte Administrativo" as TransAdm
+    }
+    rectangle "Remoção de Pátio" as CRPP
+    package "Coordenação de Transporte" as Transporte {
+        rectangle "Meia Passagem e Gratuidade" as MeiaPassagem
+        rectangle "Veículos de Aluguel" as VeicAluguel
+        rectangle "Terminais e Linhas" as TerminaisLinhas
+        rectangle "Núcleo de Vistoria" as Vistoria
+    }
+}
+
+package "Diretoria Administrativa" as DA {
+    package "Material e Patrimônio" as CMP {
+        rectangle "Segurança Patrimonial" as SegurancaPatri
+        package "Tecnologia" as Tecnologia {
+            rectangle "Controle de Sistemas" as ControleSist
+            rectangle "Suporte Técnico" as SuporteInfra
+        }
+    }
+    package "Orçamento e Finanças" as COF {
+        rectangle "Empenho e Finanças" as EmpenhoFin
+        rectangle "Pagamentos" as Pagamentos
+    }
+    package "Contratos e Convênios" as CCC {
+        rectangle "Compras e Preços" as ComprasPrecos
+        rectangle "Fiscalização de Contratos" as FiscalContratos
+    }
+    package "Pessoal" as CP {
+        rectangle "Folha de Pagamento" as Folha
+        rectangle "Controle Funcional" as ControleFuncional
+        rectangle "Corregedoria e PAD" as CorregedoriaPAD
+    }
+    package "Atendimento" as Atendimento {
+        rectangle "Protocolo" as Protocolo
+        rectangle "Consulta e Multas" as Multas
+    }
+}
+
+' Conexões do Nível 2 com as Diretorias (Nível 3)
+DO --> Secretario
+DE --> Secretario
+DA --> Secretario
+@enduml

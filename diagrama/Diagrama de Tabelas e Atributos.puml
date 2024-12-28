@@ -1,0 +1,46 @@
+@startuml entidades_com_atributos_atualizado
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title "Sistema de Alvarás Públicos - Tabelas e Atributos"
+
+Container_Boundary(database, "Banco de Dados") {
+
+    Component(person, "Pessoa", "Tabela", "Atributos:\n- ID\n- Nome\n- CPF\n- RG\n- Telefone\n- Email\n- Endereço\n- CreatedAt\n- UpdatedAt")
+    Component(funcionario, "Funcionário", "Tabela", "Atributos:\n- ID\n- PessoaID\n- Matrícula\n- Cargo\n- Função\n- DataPosse\n- DataExoneração")
+    Component(autoridade, "Autoridade", "Tabela", "Atributos:\n- ID\n- FuncionarioID\n- Status\n- DataDesignacao\n- DataInativacao")
+    Component(historico_autoridade, "Histórico de Autoridade", "Tabela", "Atributos:\n- ID\n- AutoridadeID\n- TipoAlteracao\n- Motivo\n- Data")
+
+    Component(veiculo, "Veículo", "Tabela", "Atributos:\n- ID\n- Marca\n- Modelo\n- Placa\n- RENAVAM\n- AnoFabricacao\n- AnoModelo\n- Cor\n- Status")
+    Component(historico_proprietarios, "Histórico de Proprietários", "Tabela", "Atributos:\n- ID\n- VeiculoID\n- PessoaID\n- DataInicio\n- DataFim")
+    Component(historico_motores, "Histórico de Motores", "Tabela", "Atributos:\n- ID\n- VeiculoID\n- NumeroMotor\n- NotaFiscal\n- DataAlteracao")
+    Component(historico_chassis, "Histórico de Chassis", "Tabela", "Atributos:\n- ID\n- VeiculoID\n- NumeroChassi\n- NotaFiscal\n- DataAlteracao")
+    Component(historico_placas, "Histórico de Placas", "Tabela", "Atributos:\n- ID\n- VeiculoID\n- Placa\n- Motivo\n- DataAlteracao")
+
+    Component(processo_alvara, "Processo de Alvará", "Tabela", "Atributos:\n- ID\n- Numero\n- TipoProcesso\n- PermissionarioID\n- DefensorID\n- VeiculoID\n- Status\n- Observacoes\n- DataCriacao\n- DataConclusao")
+    Component(historico_processo, "Histórico de Processo de Alvará", "Tabela", "Atributos:\n- ID\n- ProcessoID\n- TipoAlteracao\n- Motivo\n- Data")
+
+    Component(alvara, "Alvará", "Tabela", "Atributos:\n- ID\n- Numero\n- PermissionarioID\n- DefensorID\n- VeiculoID\n- DataEmissao\n- DataValidade\n- Status\n- Observacoes")
+    Component(historico_alvara, "Histórico de Alvará", "Tabela", "Atributos:\n- ID\n- AlvaraID\n- TipoAlteracao\n- Motivo\n- Data")
+
+    Component(curso, "Curso Realizado", "Tabela", "Atributos:\n- ID\n- PessoaID\n- TipoCurso\n- EntidadeCredenciadaID\n- DataConclusao\n- Validade")
+    Component(vistoria, "Vistoria", "Tabela", "Atributos:\n- ID\n- VeiculoID\n- DataAgendada\n- DataRealizada\n- Status\n- Observacoes")
+    Component(dates_validade, "Datas de Validade", "Tabela", "Atributos:\n- ID\n- Categoria\n- TipoDocumento\n- NumeroDocumento\n- AutoridadeDeliberativaID\n- DataValidade\n- Status\n- Observacoes")
+
+}
+
+Rel(person, funcionario, "É vinculado a")
+Rel(funcionario, autoridade, "Pode ser designado como")
+Rel(autoridade, historico_autoridade, "Possui alterações registradas em")
+Rel(veiculo, processo_alvara, "É vinculado em")
+Rel(veiculo, historico_proprietarios, "É associado a vários proprietários")
+Rel(veiculo, historico_motores, "Pode ter motores alterados registrados em")
+Rel(veiculo, historico_chassis, "Pode ter chassis alterados registrados em")
+Rel(veiculo, historico_placas, "Pode ter placas alteradas registradas em")
+Rel(veiculo, vistoria, "É vistoriado para emissão de alvará")
+Rel(person, processo_alvara, "Pode iniciar um processo de alvará como permissionário")
+Rel(processo_alvara, historico_processo, "Possui histórico de alterações")
+Rel(processo_alvara, alvara, "Se concluído, gera um alvará")
+Rel(alvara, historico_alvara, "Possui alterações registradas em")
+Rel(curso, person, "É associado a um permissionário ou defensor")
+Rel(alvara, dates_validade, "Segue datas definidas de validade")
+@enduml

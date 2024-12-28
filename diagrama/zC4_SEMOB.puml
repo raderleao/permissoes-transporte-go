@@ -1,0 +1,56 @@
+@startuml
+!define RECTANGLE_COLOR LightSkyBlue
+!define HEADER_COLOR LightBlue
+
+skinparam linetype ortho
+skinparam rectangle {
+    BackgroundColor RECTANGLE_COLOR
+    BorderColor Black
+    FontColor Black
+}
+
+' Nível 1 - Secretaria
+rectangle "Secretário" as Secretario #HEADER_COLOR
+
+' Nível 2 - Secretaria Adjunto e Assessores
+rectangle "Secretário Adjunto" as SecAdj
+rectangle "Assessoria Técnica" as AssTec
+rectangle "Assessoria Jurídica" as AssJur
+rectangle "Chefia de Gabinete" as ChefGab
+rectangle "Ouvidoria" as Ouvidoria
+
+' Conexões do Nível 1 com Nível 2
+SecAdj --> Secretario
+AssTec --> Secretario
+AssJur --> Secretario
+ChefGab --> Secretario
+Ouvidoria --> Secretario
+
+' Nível 3 - Diretorias
+package "Diretoria Operacional" as DO {
+    rectangle "Centro de Controle Operacional - CCO" as CCO
+    rectangle "Sinistros e Perícia Viária" as Sinistros
+    rectangle "Fiscalização e Operações de Trânsito" as Fiscalizacao
+    rectangle "Fiscalização de Transportes" as FiscalTrans
+}
+
+package "Diretoria Executiva" as DE {
+    rectangle "Engenharia e Projetos Viários" as Engenharia
+    rectangle "Coordenação de Frota" as Frota
+    rectangle "Remoção e Permanência de Pátio" as Remocao
+    rectangle "Coordenação de Transporte" as Transporte
+}
+
+package "Diretoria Administrativa" as DA {
+    rectangle "Material e Patrimônio" as Material
+    rectangle "Orçamento e Finanças" as Orcamento
+    rectangle "Contratos e Convênios" as Contratos
+    rectangle "Pessoal" as Pessoal
+    rectangle "Atendimento" as Atendimento
+}
+
+' Conexão do Nível 2 com as Diretorias (Nível 3)
+DO --> Secretario
+DE --> Secretario
+DA --> Secretario
+@enduml

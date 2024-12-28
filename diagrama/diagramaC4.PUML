@@ -1,0 +1,41 @@
+@startuml contexto
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+AddRelTag("async", $lineStyle = DashedLine())
+SHOW_PERSON_PORTRAIT()
+
+title "Sistema de Alvarás Públicos"
+
+Person(permissionario, "Permissionário", "Pessoa que solicita ou renova permissões e alvarás")
+Person(defensor, "Defensor", "Pessoa que representa o permissionário e pode atuar em seu nome")
+Person(funcionario_balcao, "Funcionário do Balcão", "Gerencia o processo de recebimento e validação dos documentos")
+Person(autoridade, "Autoridade", "Assina os alvarás após validação do processo")
+
+System_Boundary(sistema_alvara, "Sistema de Alvarás") {
+    Container(processo_alvara, "Componente de Processo de Alvará", "Go", "Gerencia os processos iniciais até a emissão do alvará")
+    Container(alvara, "Componente de Alvará", "Go", "Gerencia os alvarás emitidos e suas validades")
+    Container(validacao, "Componente de Validação", "Go", "Valida cursos, vistorias e pagamentos para os processos de alvará")
+    Container(auditoria, "Componente de Auditoria", "Go", "Rastreia alterações e mantém históricos")
+    
+    Container(database, "Banco de Dados", "PostgreSQL", "Armazena processos, alvarás, cursos, vistorias e históricos")
+
+    Container(frontend_permissionario, "Frontend Permissionário", "React", "Interface para permissionários iniciarem ou acompanharem processos")
+    Container(frontend_funcionario, "Frontend Funcionário", "React", "Interface para funcionários gerenciarem processos e documentos")
+    Container(notificacoes, "Sistema de Notificações", "Twilio/WhatsApp API", "Envia e-mails, SMS e notificações aos usuários")
+}
+
+Rel(permissionario, frontend_permissionario, "Interage com", "HTTPS")
+Rel(defensor, frontend_permissionario, "Interage com", "HTTPS")
+Rel(funcionario_balcao, frontend_funcionario, "Interage com", "HTTPS")
+Rel(autoridade, frontend_funcionario, "Acompanha processos e assina alvarás", "HTTPS")
+
+Rel(frontend_permissionario, processo_alvara, "Envia solicitações de processo", "HTTPS/JSON")
+Rel(frontend_funcionario, processo_alvara, "Gerencia processos de alvará", "HTTPS/JSON")
+Rel(processo_alvara, validacao, "Consulta dados para validação de requisitos", "HTTPS/JSON")
+Rel(validacao, database, "Armazena e consulta dados de validação", "TCP")
+Rel(processo_alvara, database, "Armazena processos de alvará", "TCP")
+Rel(alvara, database, "Armazena e consulta alvarás e validades", "TCP")
+Rel(auditoria, database, "Consulta e grava históricos", "TCP")
+
+Rel(processo_alvara, notificacoes, "Envia notificações de status do processo", "HTTPS")
+Rel(alvara, notificacoes, "Notifica emissão ou vencimento de alvarás", "HTTPS")
+@enduml

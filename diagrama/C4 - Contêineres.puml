@@ -1,0 +1,36 @@
+@startuml container
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title "Sistema de Alvarás Públicos - Contêineres"
+
+Person(permissionario, "Permissionário")
+Person(defensor, "Defensor")
+Person(funcionario_balcao, "Funcionário do Balcão")
+Person(autoridade, "Autoridade")
+
+System_Boundary(sistema_alvara, "Sistema de Alvarás") {
+    Container(frontend_permissionario, "Frontend Permissionário", "React", "Interface para os permissionários e defensores")
+    Container(frontend_funcionario, "Frontend Funcionário", "React", "Interface para os funcionários do balcão e autoridades")
+    Container(processo_alvara, "Processo de Alvará", "Go", "Gerencia a criação e acompanhamento de processos de alvarás")
+    Container(alvara, "Componente de Alvará", "Go", "Gerencia a emissão e validade dos alvarás")
+    Container(validacao, "Validação", "Go", "Valida os requisitos de cursos, vistorias e pagamentos")
+    Container(auditoria, "Auditoria", "Go", "Registra o histórico de alterações e rastreamento de dados")
+    Container(notificacoes, "Notificações", "Twilio/WhatsApp API", "Envia notificações para usuários")
+    ContainerDb(database, "Banco de Dados", "PostgreSQL", "Armazena processos, alvarás, documentos e históricos")
+}
+
+Rel(permissionario, frontend_permissionario, "Inicia e acompanha processos")
+Rel(defensor, frontend_permissionario, "Atua em nome do permissionário")
+Rel(funcionario_balcao, frontend_funcionario, "Gerencia processos e documentos")
+Rel(autoridade, frontend_funcionario, "Assina alvarás")
+
+Rel(frontend_permissionario, processo_alvara, "Submete solicitações de processo", "HTTPS")
+Rel(frontend_funcionario, processo_alvara, "Valida documentos e acompanha processos", "HTTPS")
+Rel(processo_alvara, validacao, "Valida requisitos para alvará", "HTTPS/JSON")
+Rel(validacao, database, "Armazena dados de validação", "TCP")
+Rel(processo_alvara, database, "Armazena processos de alvará", "TCP")
+Rel(alvara, database, "Armazena alvarás emitidos", "TCP")
+Rel(auditoria, database, "Consulta e grava históricos", "TCP")
+Rel(notificacoes, processo_alvara, "Envia notificações de status", "HTTPS")
+
+@enduml

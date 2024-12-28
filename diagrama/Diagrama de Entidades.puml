@@ -1,0 +1,45 @@
+@startuml entidades
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title "Sistema de Alvarás Públicos - Entidades"
+
+Container_Boundary(database, "Banco de Dados") {
+
+    Component(person, "Pessoa", "Tabela", "Armazena dados gerais de pessoas\n(ID, Nome, CPF, RG, Telefone, Email, Endereço)")
+    Component(funcionario, "Funcionário", "Tabela", "Dados de funcionários vinculados aos órgãos\n(ID, PessoaID, Matrícula, Cargo, DataPosse, DataExoneração)")
+    Component(autoridade, "Autoridade", "Tabela", "Registra autoridades que podem assinar alvarás\n(ID, FuncionarioID, Status, DataDesignacao)")
+    Component(historico_autoridade, "Histórico de Autoridade", "Tabela", "Histórico de alterações nas autoridades\n(ID, AutoridadeID, TipoAlteracao, Data)")
+
+    Component(veiculo, "Veículo", "Tabela", "Dados dos veículos vinculados aos processos\n(ID, Marca, Modelo, Placa, RENAVAM, Ano, Status)")
+    Component(historico_proprietarios, "Histórico de Proprietários", "Tabela", "Histórico de proprietários dos veículos\n(ID, VeiculoID, PessoaID, DataInicio, DataFim)")
+    Component(historico_motores, "Histórico de Motores", "Tabela", "Histórico de motores dos veículos\n(ID, VeiculoID, NumeroMotor, DataAlteracao)")
+    Component(historico_chassis, "Histórico de Chassis", "Tabela", "Registra alterações no chassi\n(ID, VeiculoID, NumeroChassi, DataAlteracao)")
+    Component(historico_placas, "Histórico de Placas", "Tabela", "Registra mudanças de placas\n(ID, VeiculoID, NumeroPlaca, DataAlteracao)")
+
+    Component(processo_alvara, "Processo de Alvará", "Tabela", "Gerencia os processos antes da emissão do alvará\n(ID, Numero, PermissionarioID, Status, Data)")
+    Component(historico_processo, "Histórico de Processo de Alvará", "Tabela", "Rastreia alterações nos processos\n(ID, ProcessoID, TipoAlteracao, Data)")
+
+    Component(alvara, "Alvará", "Tabela", "Armazena alvarás emitidos e validades\n(ID, Numero, PermissionarioID, VeiculoID, DataEmissao, DataValidade, Status)")
+    Component(historico_alvara, "Histórico de Alvará", "Tabela", "Rastreia alterações em alvarás\n(ID, AlvaraID, TipoAlteracao, Data)")
+
+    Component(curso, "Curso Realizado", "Tabela", "Registra cursos obrigatórios concluídos\n(ID, PessoaID, TipoCurso, DataConclusao, Validade)")
+    Component(vistoria, "Vistoria", "Tabela", "Registra vistorias realizadas nos veículos\n(ID, VeiculoID, Data, Status)")
+    Component(dates_validade, "Datas de Validade", "Tabela", "Gerencia os prazos de validade de alvarás\n(ID, Categoria, TipoDocumento, DataValidade, Status)")
+
+}
+
+Rel(person, funcionario, "É vinculado a")
+Rel(funcionario, autoridade, "Pode ser designado como")
+Rel(autoridade, historico_autoridade, "Possui alterações registradas em")
+Rel(veiculo, historico_proprietarios, "É associado a vários proprietários")
+Rel(veiculo, historico_motores, "Pode ter motores alterados registrados em")
+Rel(veiculo, historico_chassis, "Pode ter chassis alterados registrados em")
+Rel(veiculo, historico_placas, "Pode ter placas alteradas registradas em")
+Rel(veiculo, vistoria, "É vistoriado para emissão de alvará")
+Rel(person, processo_alvara, "Pode iniciar um processo de alvará como permissionário")
+Rel(processo_alvara, historico_processo, "Possui histórico de alterações")
+Rel(processo_alvara, alvara, "Se concluído, gera um alvará")
+Rel(alvara, historico_alvara, "Possui alterações registradas em")
+Rel(curso, person, "É associado a um permissionário ou defensor")
+Rel(alvara, dates_validade, "Segue datas definidas de validade")
+@enduml

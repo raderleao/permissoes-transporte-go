@@ -1,0 +1,23 @@
+@startuml contexto
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+SHOW_PERSON_PORTRAIT()
+
+title "Sistema de Alvarás Públicos - Contexto"
+
+Person(permissionario, "Permissionário", "Solicita ou renova alvarás")
+Person(defensor, "Defensor", "Representa o permissionário no processo")
+Person(funcionario_balcao, "Funcionário do Balcão", "Gerencia e valida processos e documentos")
+Person(autoridade, "Autoridade", "Responsável por assinar os alvarás")
+Person(admin_sistema, "Administrador do Sistema", "Gerencia configurações e permissões do sistema")
+
+System_Boundary(sistema_alvara, "Sistema de Alvarás Públicos") {
+    System(sistema, "Sistema de Alvarás", "Plataforma para gerenciar processos e alvarás")
+}
+
+Rel(permissionario, sistema, "Submete solicitações de processos")
+Rel(defensor, sistema, "Atua em nome do permissionário")
+Rel(funcionario_balcao, sistema, "Valida documentos e gerencia processos")
+Rel(autoridade, sistema, "Assina alvarás após validação")
+Rel(admin_sistema, sistema, "Configura e gerencia permissões")
+
+@enduml
